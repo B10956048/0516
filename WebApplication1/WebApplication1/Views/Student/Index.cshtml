@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Student>//controller->student的list
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    int total = int.Parse(ViewData["total"].ToString());
+    int pageCount = total / 10 + (total % 10 > 0 ? 1 : 0);
+    int nowPage = int.Parse(ViewData["nowPage"].ToString());
+    int seqNo = 1 + (nowPage - 1) * 10 ;
+}
+<div class = "text-center">
+
+學生管理
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">學生名稱</th>
+      <th scope="col">學生學號</th>
+      <th scope="col">GitHub超連結</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+      @foreach(var item in Model) //第一行宣告的model 
+      {           
+      <tr>
+        <th scope="row">@seqNo</th>
+        <td>@item.studentName</td>
+        <td>@item.studentNo</td>
+        <td>@item.githubLink</td>
+        <td>
+            @Html.ActionLink("修改","Update",new{ studentNo = item.studentNo})
+        </td>
+      </tr>
+      seqNo++;
+      }
+  </tbody>
+</table>
+    @if (pageCount > 0)
+    {    
+        <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if(nowPage > 1)
+            {
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-nowPage="@(nowPage-1)">上一頁</a></li>
+            }
+            @for (int i = 1; i <= pageCount;i++)
+            {
+                var active = i == nowPage ? "active" : "";
+
+                <li class="page-item @active "><a class="page-link" asp-action="Index" asp-route-nowPage="@i">@i</a ></li>
+            }
+            @if(nowPage < pageCount)
+            {
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-nowPage="@(nowPage+1)">下一頁</a></li>
+            }
+    </ul>
+    </nav>  
+ }
+</div>
