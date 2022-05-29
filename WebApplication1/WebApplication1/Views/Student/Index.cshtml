@@ -94,11 +94,11 @@
             {
                 var active = i == nowPage ? "active" : "";
 
-                <li class="page-item @active "><a class="page-link" asp-action="Index"  data-topage="@i">>@i</a ></li>
+                <li class="page-item @active "><a class="page-link" asp-action="Index"  data-topage="@i">@i</a ></li>
             }
             @if(nowPage < pageCount)
             {
-                <li class="page-item"><a class="page-link" asp-action="Index"  data-topage="@(nowPage+1)">>下一頁</a></li>
+                <li class="page-item"><a class="page-link" asp-action="Index"  data-topage="@(nowPage+1)">下一頁</a></li>
             }
     </ul>
     </nav>  
@@ -112,7 +112,7 @@ var pageitems = document.getElementsByClassName("page-link")
 
 for(i = 0 ; i <pageitems.length;i++){
     pageitems[i].onclick = function(){
-        let toPage = this.dataset.toPage;
+        let toPage = this.dataset.topage;
         document.getElementById("nowPage").value = toPage;
         document.getElementById("formIndex").submit();
 
