@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using WebApplication1.Models;
+using System;
 
 namespace WebApplication1.Service
 {
@@ -83,6 +84,40 @@ namespace WebApplication1.Service
             studentGithubs.Add(new Student("B10756036", " 陳婉茹", ""));
         }
 
+        public bool CreateStudent(Student student)
+        {
+            try
+            {
+                student.creDateTime = DateTime.Now;
+                studentGithubs.Add(student);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteStudent(string studentNo)
+        {
+            try
+            {
+                var data = studentGithubs.Find(x => x.studentNo == studentNo);
+                if (data != null)
+                {
+                    data.IsDelete = true;
+                    data.UpdateDateTime = DateTime.Now;
+
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public Student GetStudentByNo(string studentNo)
         {
             return studentGithubs.FirstOrDefault(x => x.studentNo == studentNo);
@@ -90,12 +125,31 @@ namespace WebApplication1.Service
 
         public (int total, List<Student>) GetStudents(int offset, int count)
         {
-            return (studentGithubs.Count, studentGithubs.Skip(offset).Take(count).ToList());
+            return (studentGithubs.Count, studentGithubs.Where(x=> !x.IsDelete).Skip(offset).Take(count).ToList());
         }
 
         public List<Student> GetStudents()
         {
-            return studentGithubs; 
+            return studentGithubs.Where(x => x.IsDelete == false).ToList(); 
+        }
+
+        public (int total, List<Student>) GetStudents(int offset, int count, Dictionary<string, string> queryDic)
+        {
+            var list = GetStudents();
+
+            if (!string.IsNullOrWhiteSpace(queryDic["studentName"]))
+            {
+                list = list.Where(x => x.studentName.Contains(queryDic["studentName"])).ToList();
+            }
+            if (!string.IsNullOrWhiteSpace(queryDic["studentNo"]))
+            {
+                list = list.Where(x => x.studentNo.Contains(queryDic["studentNo"])).ToList();
+            }
+            if (!string.IsNullOrWhiteSpace(queryDic["githubLink"]))
+            {
+                list = list.Where(x => x.githubLink.Contains(queryDic["githubLink"])).ToList();
+            }
+            return (list.Count, list.Skip(offset).Take(count).ToList());
         }
 
         public bool UpdateStudent(Student student)
